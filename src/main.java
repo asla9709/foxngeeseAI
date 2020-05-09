@@ -55,7 +55,6 @@ public class main {
 		         	   "8. left goose 4");
 			}
 			
-			//scan for input
 			//scan the user input
 			if(scan.hasNextInt()){	
 				playerMove = scan.nextInt();
