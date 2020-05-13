@@ -32,7 +32,7 @@ public class main {
         //create player objects - fox or geese
         //create computer objects - fox or geese
 
-        BoardNode bn = new BoardNode();
+        Board bn = new Board();
 
         System.out.println(bn);
 

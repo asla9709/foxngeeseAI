@@ -29,17 +29,12 @@ class Location{
     }
 }
 
-public class BoardNode {
-    BoardNode parent;
-    ArrayList<BoardNode> children = new ArrayList<>();
-
+public class Board{
     Location[] GeeseLocs;
     Location FoxLoc;
 
     //Initial constructor, make a starter board
-    BoardNode(){
-        this.parent = null;
-
+    Board(){
         FoxLoc = new Location(7,2);
 
         GeeseLocs = new Location[4];
@@ -49,15 +44,13 @@ public class BoardNode {
     }
 
     //Copy Constructor
-    BoardNode(BoardNode og){
-        this.parent = og;
-
+    Board(Board og){
         GeeseLocs = new Location[4];
         for(int goose = 0; goose < 4; goose++){
             GeeseLocs[goose] = new Location(og.GeeseLocs[goose]);
         }
 
-        Location FoxLoc = new Location(og.FoxLoc);
+        FoxLoc = new Location(og.FoxLoc);
     }
 
     char printSpot(Location s){
