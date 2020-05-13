@@ -76,14 +76,23 @@ public class main {
                 }
                 if (playerID == 1) {
                     MoveDir playerDirection;
-                    //fox
-                    playerDirection = switch (playerMove) {
-                        case 1 -> MoveDir.ForwardRight;
-                        case 2 -> MoveDir.ForwardLeft;
-                        case 3 -> MoveDir.BackwardRight;
-                        case 4 -> MoveDir.BackwardLeft;
-                        default -> MoveDir.ForwardRight;
-                    };
+                    switch (playerMove) {
+                        case 1:
+                        	playerDirection = MoveDir.ForwardRight;
+                        	break;
+                        case 2:
+                        	playerDirection = MoveDir.ForwardLeft;
+                        	break;
+                        case 3:
+                        	playerDirection = MoveDir.BackwardRight;
+                        	break;
+                        case 4:
+                        	playerDirection = MoveDir.BackwardLeft;
+                        	break;
+                        default:
+                        	playerDirection = MoveDir.ForwardRight;
+                        	break;
+                    }
 
                     moveMade = bn.moveFox(playerDirection);
 
@@ -104,7 +113,6 @@ public class main {
                 if(!moveMade){
                     System.out.println("That move is invalid, please select another move");
                 }
-
             }
 
             //print board
@@ -134,41 +142,75 @@ public class main {
                 //computer plays as goose
                 int goose = ran.nextInt(4);
                 int dirChoice = ran.nextInt(2);
-                MoveDir dir = switch(dirChoice){
-                    case 0 ->MoveDir.ForwardRight;
-                    case 1 -> MoveDir.ForwardLeft;
-                    default -> MoveDir.ForwardRight;
-                };
+                MoveDir dir;
+                switch(dirChoice){
+                    case 0:
+                    	 dir = MoveDir.ForwardRight;
+                    	 break;
+                    case 1:
+                    	 dir = MoveDir.ForwardLeft;
+                    	 break;
+                    default:
+                    	 dir = MoveDir.ForwardRight;
+                    	 break;
+                }
                 while(!bn.moveGoose(dir, goose)){
                     goose = ran.nextInt(4);
                     dirChoice = ran.nextInt(2);
-                    dir = switch(dirChoice){
-                        case 0 ->MoveDir.ForwardRight;
-                        case 1 -> MoveDir.ForwardLeft;
-                        default -> MoveDir.ForwardRight;
-                    };
+                    switch(dirChoice){
+                        case 0:
+                        	dir = MoveDir.ForwardRight;
+                       	 	break;
+                        case 1:
+                        	dir = MoveDir.ForwardLeft;
+                        	break;
+                        default:
+                        	dir = MoveDir.ForwardRight;
+                        	break;
+                    }
                 }
 
                 System.out.println("Computer moved goose " + (goose + 1) + " direction " + dir.name());
 
             } else{
                int dirChoice = ran.nextInt(4);
-                MoveDir dir = switch(dirChoice){
-                    case 0 ->MoveDir.ForwardRight;
-                    case 1 -> MoveDir.ForwardLeft;
-                    case 2 -> MoveDir.BackwardLeft;
-                    case 3 -> MoveDir.BackwardRight;
-                    default -> MoveDir.ForwardRight;
-                };
+                MoveDir dir;
+                switch(dirChoice){
+                    case 0:
+                    	dir = MoveDir.ForwardRight;
+                    	break;
+                    case 1:
+                    	dir = MoveDir.ForwardLeft;
+                    	break;
+                    case 2:
+                    	dir = MoveDir.BackwardLeft;
+                    	break;
+                    case 3:
+                    	dir = MoveDir.BackwardRight;
+                    	break;
+                    default:
+                    	dir = MoveDir.ForwardRight;
+                    	break;
+                }
                 while(!bn.moveFox(dir)){
                     dirChoice = ran.nextInt(4);
-                    dir = switch(dirChoice){
-                        case 0 ->MoveDir.ForwardRight;
-                        case 1 -> MoveDir.ForwardLeft;
-                        case 2 -> MoveDir.BackwardLeft;
-                        case 3 -> MoveDir.BackwardRight;
-                        default -> MoveDir.ForwardRight;
-                    };
+                    switch(dirChoice){
+                        case 0:
+                        	dir = MoveDir.ForwardRight;
+                        	break;
+                        case 1:
+                        	dir = MoveDir.ForwardLeft;
+                        	break;
+                        case 2:
+                        	dir = MoveDir.BackwardLeft;
+                        	break;
+                        case 3:
+                        	dir = MoveDir.BackwardRight;
+                        	break;
+                        default:
+                        	dir = MoveDir.ForwardRight;
+                        	break;
+                    }
                 }
                 System.out.println("Computer moved the fox " + dir.name());
             }

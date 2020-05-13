@@ -83,12 +83,25 @@ public class BoardNode {
     }
 
     public Boolean isValidMoveFox(MoveDir dir){
-        Location new_loc = switch (dir){
-            case ForwardLeft -> new Location(FoxLoc.row - 1, FoxLoc.col - 1);
-            case BackwardLeft -> new Location(FoxLoc.row + 1, FoxLoc.col - 1);
-            case ForwardRight -> new Location(FoxLoc.row - 1, FoxLoc.col + 1);
-            case BackwardRight -> new Location(FoxLoc.row + 1, FoxLoc.col + 1);
-        };
+        Location new_loc;
+        switch (dir){
+            case ForwardLeft:
+            	new_loc = new Location(FoxLoc.row - 1, FoxLoc.col - 1);
+            	break;
+            case BackwardLeft:
+            	new_loc = new Location(FoxLoc.row + 1, FoxLoc.col - 1);
+            	break;
+            case ForwardRight:
+            	new_loc = new Location(FoxLoc.row - 1, FoxLoc.col + 1);
+            	break;
+            case BackwardRight: 
+            	new_loc = new Location(FoxLoc.row + 1, FoxLoc.col + 1);
+            	break;
+            default:
+            	//forward right
+            	new_loc = new Location(FoxLoc.row - 1, FoxLoc.col + 1);
+            	break;
+        }
 
         //check that it is valid
         if (new_loc.row < 0 || new_loc.row > 7){
@@ -111,15 +124,23 @@ public class BoardNode {
     public Boolean moveFox(MoveDir dir){
         if(!isValidMoveFox(dir)) return false;
 
-        FoxLoc = switch (dir){
-            case ForwardLeft -> new Location(FoxLoc.row - 1, FoxLoc.col - 1);
-            case BackwardLeft -> new Location(FoxLoc.row + 1, FoxLoc.col - 1);
-            case ForwardRight -> new Location(FoxLoc.row - 1, FoxLoc.col + 1);
-            case BackwardRight -> new Location(FoxLoc.row + 1, FoxLoc.col + 1);
-        };
+        switch (dir){
+            case ForwardLeft:
+            	 FoxLoc = new Location(FoxLoc.row - 1, FoxLoc.col - 1);
+            	 break;
+            case BackwardLeft:
+            	 FoxLoc = new Location(FoxLoc.row + 1, FoxLoc.col - 1);
+            	 break;
+            case ForwardRight:
+            	 FoxLoc = new Location(FoxLoc.row - 1, FoxLoc.col + 1);
+            	 break;
+            case BackwardRight:
+            	 FoxLoc = new Location(FoxLoc.row + 1, FoxLoc.col + 1);
+            	 break;
+        }
         return true;
     }
-
+    
     public Boolean moveGoose(MoveDir dir, int mygoose){
         Location new_loc = new Location(0,0);
         Location goose_loc = GeeseLocs[mygoose];
