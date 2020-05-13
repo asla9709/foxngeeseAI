@@ -11,10 +11,19 @@ enum BoardSpot{
 class Location{
     int row;
     int col;
+
+    //Default Constructor
     Location(int row, int col){
         this.row = row;
         this.col = col;
     }
+
+    //Copy Constructor
+    Location(Location a){
+        this.row = a.row;
+        this.col = a.col;
+    }
+
     public boolean equals(Location b){
         return (this.row == b.row && this.col == b.col);
     }
@@ -37,6 +46,18 @@ public class BoardNode {
         for (int goose = 0; goose < 4; goose++) {
             GeeseLocs[goose] = new Location(0, (goose*2) + 1);
         }
+    }
+
+    //Copy Constructor
+    BoardNode(BoardNode og){
+        this.parent = og;
+
+        GeeseLocs = new Location[4];
+        for(int goose = 0; goose < 4; goose++){
+            GeeseLocs[goose] = new Location(og.GeeseLocs[goose]);
+        }
+
+        Location FoxLoc = new Location(og.FoxLoc);
     }
 
     char printSpot(Location s){
