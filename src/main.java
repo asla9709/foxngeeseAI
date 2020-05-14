@@ -4,12 +4,10 @@ import java.util.Scanner;
 public class main {
 
     public static void main(String[] args) {
-
-        Random ran = new Random();
-
         Scanner scan = new Scanner(System.in);
 
-        int playerID = 0;
+        MinMaxPlayer player;
+        boolean playerIsFox;
         int searchDepth = 0;
 
         //ask the user if they want to be fox or goose
@@ -17,9 +15,11 @@ public class main {
         System.out.println("Do you want to play as the Fox or the Geese?(enter 1 for Fox and 2 for Geese): ");
 
         //scan the user input
+        int playerID = 0;
         if (scan.hasNextInt()) {
             playerID = scan.nextInt();
         }
+        playerIsFox = (playerID == 1);
 
         //ask the user for search depth
         System.out.println("What is the depth of seach allowed: ");
@@ -29,12 +29,14 @@ public class main {
             searchDepth = scan.nextInt();
         }
 
+        player = new MinMaxPlayer(!playerIsFox, searchDepth);
+
         //create player objects - fox or geese
         //create computer objects - fox or geese
 
-        Board bn = new Board();
+        Board board = new Board();
 
-        System.out.println(bn);
+        System.out.println(board);
 
         boolean gameOver = false;
         while (!gameOver) {
@@ -42,7 +44,7 @@ public class main {
             int playerMove = 0;
 
             //give player the menu of choices for input
-            if (playerID == 1) {
+            if (playerIsFox) {
                 //fox
                 System.out.println("Current available moves:\n" +
                         "1. right forward\n" +
@@ -74,7 +76,7 @@ public class main {
                         break;
                     }
                 }
-                if (playerID == 1) {
+                if (playerIsFox) {
                     MoveDir playerDirection;
                     switch (playerMove) {
                         case 1:
@@ -87,14 +89,12 @@ public class main {
                         	playerDirection = MoveDir.BackwardRight;
                         	break;
                         case 4:
-                        	playerDirection = MoveDir.BackwardLeft;
-                        	break;
                         default:
-                        	playerDirection = MoveDir.ForwardRight;
+                        	playerDirection = MoveDir.BackwardLeft;
                         	break;
                     }
 
-                    moveMade = bn.moveFox(playerDirection);
+                    moveMade = board.moveFox(playerDirection);
 
                 } else {
                     MoveDir playerDirection;
@@ -107,7 +107,7 @@ public class main {
                     }
                     goose = (playerMove + 1) / 2 - 1;
 
-                    moveMade = bn.moveGoose(playerDirection, goose);
+                    moveMade = board.moveGoose(playerDirection, goose);
                 }
 
                 if(!moveMade){
@@ -116,15 +116,15 @@ public class main {
             }
 
             //print board
-            System.out.println(bn);
+            System.out.println(board);
 
             //check for win conditions
-            if(bn.checkWinFox()){
+            if(board.checkWinFox()){
                 System.out.println("The Fox won!");
                 gameOver = true;
                 break;
             }
-            if(bn.checkWinGoose()){
+            if(board.checkWinGoose()){
                 System.out.println("Geese have won");
                 gameOver = true;
                 break;
@@ -132,99 +132,26 @@ public class main {
 
             //--------------------------------COMPUTER MOVING--------------------------------
             //computer do a minimax search and make the move
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
-            if (playerID == 1){
-                //computer plays as goose
-                int goose = ran.nextInt(4);
-                int dirChoice = ran.nextInt(2);
-                MoveDir dir;
-                switch(dirChoice){
-                    case 0:
-                    	 dir = MoveDir.ForwardRight;
-                    	 break;
-                    case 1:
-                    	 dir = MoveDir.ForwardLeft;
-                    	 break;
-                    default:
-                    	 dir = MoveDir.ForwardRight;
-                    	 break;
-                }
-                while(!bn.moveGoose(dir, goose)){
-                    goose = ran.nextInt(4);
-                    dirChoice = ran.nextInt(2);
-                    switch(dirChoice){
-                        case 0:
-                        	dir = MoveDir.ForwardRight;
-                       	 	break;
-                        case 1:
-                        	dir = MoveDir.ForwardLeft;
-                        	break;
-                        default:
-                        	dir = MoveDir.ForwardRight;
-                        	break;
-                    }
-                }
+            Move m = player.doAIStuff(board);
+            board.doMove(m);
 
-                System.out.println("Computer moved goose " + (goose + 1) + " direction " + dir.name());
-
-            } else{
-               int dirChoice = ran.nextInt(4);
-                MoveDir dir;
-                switch(dirChoice){
-                    case 0:
-                    	dir = MoveDir.ForwardRight;
-                    	break;
-                    case 1:
-                    	dir = MoveDir.ForwardLeft;
-                    	break;
-                    case 2:
-                    	dir = MoveDir.BackwardLeft;
-                    	break;
-                    case 3:
-                    	dir = MoveDir.BackwardRight;
-                    	break;
-                    default:
-                    	dir = MoveDir.ForwardRight;
-                    	break;
-                }
-                while(!bn.moveFox(dir)){
-                    dirChoice = ran.nextInt(4);
-                    switch(dirChoice){
-                        case 0:
-                        	dir = MoveDir.ForwardRight;
-                        	break;
-                        case 1:
-                        	dir = MoveDir.ForwardLeft;
-                        	break;
-                        case 2:
-                        	dir = MoveDir.BackwardLeft;
-                        	break;
-                        case 3:
-                        	dir = MoveDir.BackwardRight;
-                        	break;
-                        default:
-                        	dir = MoveDir.ForwardRight;
-                        	break;
-                    }
-                }
-                System.out.println("Computer moved the fox " + dir.name());
-            }
-
-            System.out.println(bn);
+            System.out.println("The computer did the move " + m);
+            System.out.println(board);
 
             //check for win conditions
-            if(bn.checkWinFox()){
+            if(board.checkWinFox()){
                 System.out.println("The Fox won!");
                 System.out.println("You lost to a computer haha noob");
                 gameOver = true;
                 break;
             }
-            if(bn.checkWinGoose()){
+            if(board.checkWinGoose()){
                 System.out.println("Geese have won");
                 gameOver = true;
                 break;

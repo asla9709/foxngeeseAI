@@ -96,6 +96,20 @@ public class Board{
         return true;
     }
 
+    public boolean isValidMove(Move move){
+        if (move.person == MovePerson.Fox) {
+            return isValidMoveFox(move.dir);
+        }
+        return isValidMoveGoose(move.dir, move.person.ordinal());
+    }
+
+    public boolean doMove(Move move){
+       if (move.person == MovePerson.Fox){
+           return moveFox(move.dir);
+       }
+       return moveGoose(move.dir, move.person.ordinal());
+    }
+
     public Boolean isValidMoveFox(MoveDir dir){
         Location new_loc;
         switch (dir){
@@ -154,8 +168,8 @@ public class Board{
         }
         return true;
     }
-    
-    public Boolean moveGoose(MoveDir dir, int mygoose){
+
+    public boolean isValidMoveGoose(MoveDir dir, int mygoose){
         Location new_loc = new Location(0,0);
         Location goose_loc = GeeseLocs[mygoose];
         switch (dir){
@@ -192,6 +206,29 @@ public class Board{
         //check that fox aint there
         if(FoxLoc.equals(new_loc)){
             return false;
+        }
+
+        return true;
+    }
+
+    public Boolean moveGoose(MoveDir dir, int mygoose){
+        if(!isValidMoveGoose(dir, mygoose)) return false;
+
+        Location new_loc = new Location(0,0);
+        Location goose_loc = GeeseLocs[mygoose];
+        switch (dir){
+            case ForwardLeft:
+                new_loc.row = goose_loc.row + 1;
+                new_loc.col = goose_loc.col - 1;
+                break;
+            case ForwardRight:
+                new_loc.row = goose_loc.row + 1;
+                new_loc.col = goose_loc.col + 1;
+                break;
+            case BackwardRight:
+                return false;
+            case BackwardLeft:
+                return false;
         }
 
         GeeseLocs[mygoose] = new_loc;
