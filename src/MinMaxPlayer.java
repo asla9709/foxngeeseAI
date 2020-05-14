@@ -11,7 +11,6 @@ class Node {
     int alpha = Integer.MAX_VALUE;
     int beta = Integer.MIN_VALUE;
 
-    Node parent = null;
     ArrayList<Node> children = new ArrayList<>();
 
     Node(Board board, boolean isMax) {
@@ -19,15 +18,8 @@ class Node {
         this.board = board;
     }
 
-    Node(Node parent) {
-        this.parent = parent;
-        this.board = new Board(parent.board); // copy board
-        this.isMax = !parent.isMax;
-    }
-
     Node(Node parent, Move m) {
         this.move = m;
-        this.parent = parent;
         this.board = new Board(parent.board); // copy board
         this.isMax = !parent.isMax;
 
@@ -68,16 +60,12 @@ class Node {
     ArrayList<Node> getChildren(boolean isFox) {
         ArrayList<Move> validMoves = getValidMoves(isFox);
         for (Move move : validMoves) {
-            makeChild(move);
+            Node newNode = new Node(this, move);
+            children.add(newNode);
         }
         return children;
     }
 
-    Node makeChild(Move m) {
-        Node newNode = new Node(this, m);
-        children.add(newNode);
-        return newNode;
-    }
 }
 
 
