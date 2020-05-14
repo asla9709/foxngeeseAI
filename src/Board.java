@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 enum BoardSpot{
     Invalid,
@@ -233,5 +234,21 @@ public class Board{
 
         GeeseLocs[mygoose] = new_loc;
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Board board = (Board) o;
+        return Arrays.equals(GeeseLocs, board.GeeseLocs) &&
+                Objects.equals(FoxLoc, board.FoxLoc);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(FoxLoc);
+        result = 31 * result + Arrays.hashCode(GeeseLocs);
+        return result;
     }
 }

@@ -58,6 +58,10 @@ class Node {
     }
 
     ArrayList<Node> getChildren(boolean isFox) {
+        //if children were already generated, then return children list
+        if (!children.isEmpty()) return children;
+
+        //otherwise, generate children and return
         ArrayList<Move> validMoves = getValidMoves(isFox);
         for (Move move : validMoves) {
             Node newNode = new Node(this, move);
@@ -74,6 +78,7 @@ public class MinMaxPlayer {
     int maxdepth;
     Random ran;
 
+    Node root;
 
     //Configuration
     int ROW_MULTIPLIER = 10; //Bonus that a fox gets per row away from bottom
@@ -107,16 +112,41 @@ public class MinMaxPlayer {
     }
 
     Move AlphaBetaSearch(Board board) {
-        Node n = new Node(board, isFox);
-        int v;
-        if (isFox) {
-            v = Max_Value(n, Integer.MIN_VALUE, Integer.MAX_VALUE, maxdepth*2);
-        } else {
-            v = Min_Value(n, Integer.MIN_VALUE, Integer.MAX_VALUE, maxdepth*2);
+        //try to reuse board nodes
+
+        //check if we have a root
+        if (root == null) {
+            root = new Node(board, isFox);
         }
 
-        for (Node child : n.children) {
+        boolean root_found = false;
+        //if current root is the same as the board, then it's fine
+        if (root.board.equals(board)) {
+            root_found = true;
+        } else {
+            for (Node child : root.children) {
+                //look through the children of the root for the current board state
+                if (child.board.equals(board)) {
+                    root = child;
+                    root_found = true;
+                    break;
+                }
+            }
+        }
+        if(!root_found){
+            root = new Node(board, isFox);
+        }
+
+        int v;
+        if (isFox) {
+            v = Max_Value(root, Integer.MIN_VALUE, Integer.MAX_VALUE, maxdepth * 2);
+        } else {
+            v = Min_Value(root, Integer.MIN_VALUE, Integer.MAX_VALUE, maxdepth * 2);
+        }
+
+        for (Node child : root.children) {
             if (child.value == v) {
+                root = child;
                 return child.move;
             }
         }
