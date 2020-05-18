@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Test {
@@ -6,11 +5,13 @@ public class Test {
         Scanner scan = new Scanner(System.in);
 
         int searchDepth = 3;
-//        MinMaxPlayer playerFox = new MinMaxPlayer(true, 4, 1000, 50, 100);
-//        MinMaxPlayer playerGoose = new MinMaxPlayer(false, 6, 1000, 50, 100);
+//        MinMaxPlayer playerFox = new MinMaxPlayer(true, 4, 1000, 50, 100,0);
+//        MinMaxPlayer playerGoose = new MinMaxPlayer(false, 4, 1000, 50, 100,0);
 
-        MinMaxPlayer playerFox = new MinMaxPlayer(true, 7, 250, 12, 25);
-        MinMaxPlayer playerGoose = new MinMaxPlayer(false, 7, 250, 12, 25);
+        //for the values below
+        //depth 1 --> geese won, 2 --> fox won, 3 --> fox won, 4 --> geese won, 5 --> fox won, >6 = geese won
+        MinMaxPlayer playerFox = new MinMaxPlayer(true, 5, 250, 50, 75, 1000);
+        MinMaxPlayer playerGoose = new MinMaxPlayer(false, 5, 250, 50, 75, 1000);
 
         Board board = new Board();
 

@@ -1,50 +1,61 @@
-import java.util.Random;
+/***************************************************************/
+/* Aakif Aslam and Manning Zhao                                */
+/* CS-481, Spring 2020                                         */
+/* Lab Assignment 2                                            */
+/* Purpose: Create a fox and geese game AI                     */
+/* main Class: Get input from user and then generate an AI     */
+/*             player to play fox and geese with the user      */
+/***************************************************************/
 import java.util.Scanner;
 
 public class main {
 
+    /***************************************************************/
+    /* Method: main                                                */
+    /* Purpose: Play a fox and geese game with the user            */
+    /* Parameters: String[]args: String input                      */
+    /* Returns: None                                               */
+    /***************************************************************/
     public static void main(String[] args) {
+        //create a scanner for user input
         Scanner scan = new Scanner(System.in);
 
+        //create a MinMaxPlayer
         MinMaxPlayer player;
-        boolean playerIsFox;
-        int searchDepth = 0;
+
+        boolean userIsFox;    //decides whether user is fox or geese
+        int searchDepth = 0;  //max search depth allowed by the user
 
         //ask the user if they want to be fox or goose
         System.out.println("Welcome to Fox and Geese!");
         System.out.println("Do you want to play as the Fox or the Geese?(enter 1 for Fox and 2 for Geese): ");
-
-        //scan the user input
-        int playerID = 0;
+        int userID = 0;     //user ID = 1 --> fox, user ID = 2 --> geese
         if (scan.hasNextInt()) {
-            playerID = scan.nextInt();
+            userID = scan.nextInt();
         }
-        playerIsFox = (playerID == 1);
+        userIsFox = (userID == 1);
 
         //ask the user for search depth
-        System.out.println("What is the depth of seach allowed: ");
-
-        //scan the user input
+        System.out.println("What is the depth of search allowed: ");
         if (scan.hasNextInt()) {
             searchDepth = scan.nextInt();
         }
 
-        player = new MinMaxPlayer(!playerIsFox, searchDepth);
+        //create the AI player
+        player = new MinMaxPlayer(!userIsFox, searchDepth);
 
-        //create player objects - fox or geese
-        //create computer objects - fox or geese
-
+        //create a new game board
         Board board = new Board();
-
         System.out.println(board);
 
+        //starts playing the game...
         boolean gameOver = false;
         while (!gameOver) {
             //--------------------------------PLAYER MOVING--------------------------------
             int playerMove = 0;
 
             //give player the menu of choices for input
-            if (playerIsFox) {
+            if (userIsFox) {
                 //fox
                 System.out.println("Current available moves:\n" +
                         "1. right forward\n" +
@@ -64,8 +75,6 @@ public class main {
                         "8. left goose 4");
             }
 
-            //scan for input
-
             //Make a move on the board
             boolean moveMade = false;
             while (!moveMade) {
@@ -76,23 +85,14 @@ public class main {
                         break;
                     }
                 }
-                if (playerIsFox) {
+                if (userIsFox) {
                     MoveDir playerDirection;
-                    switch (playerMove) {
-                        case 1:
-                        	playerDirection = MoveDir.ForwardRight;
-                        	break;
-                        case 2:
-                        	playerDirection = MoveDir.ForwardLeft;
-                        	break;
-                        case 3:
-                        	playerDirection = MoveDir.BackwardRight;
-                        	break;
-                        case 4:
-                        default:
-                        	playerDirection = MoveDir.BackwardLeft;
-                        	break;
-                    }
+                    playerDirection = switch (playerMove) {
+                        case 1 -> MoveDir.ForwardRight;
+                        case 2 -> MoveDir.ForwardLeft;
+                        case 3 ->  MoveDir.BackwardRight;
+                        default -> MoveDir.BackwardLeft;
+                    };
 
                     moveMade = board.moveFox(playerDirection);
 
@@ -131,17 +131,18 @@ public class main {
             }
 
             //--------------------------------COMPUTER MOVING--------------------------------
-            //computer do a minimax search and make the move
 //            try {
 //                Thread.sleep(2000);
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
 
-            Move m = player.doAIStuff(board);
-            board.doMove(m);
+            //generate a move
+            Move computerMove = player.doAIStuff(board);
+            board.doMove(computerMove);
 
-            System.out.println("The computer did the move " + m);
+            //print out the computer's move
+            System.out.println("The computer did the move " + computerMove);
             System.out.println(board);
 
             //check for win conditions
