@@ -2,6 +2,10 @@
 /* Aakif Aslam and Manning Zhao                                */
 /* CS-481, Spring 2020                                         */
 /* Lab Assignment 2                                            */
+/* Move Class: Represents a move for a fox or geese            */
+/***************************************************************/
+
+/***************************************************************/
 /* MovePerson Enum: Enum for the object that is moving on the  */
 /*                  board, there are a total of five, one fox  */
 /*                  and four geese                             */
@@ -15,9 +19,16 @@ enum MovePerson{
 }
 
 /***************************************************************/
-/* Aakif Aslam and Manning Zhao                                */
-/* CS-481, Spring 2020                                         */
-/* Lab Assignment 2                                            */
+/* Move Dir Enum: Enum for the four directions                 */
+/***************************************************************/
+enum MoveDir {
+    ForwardLeft,
+    BackwardLeft,
+    ForwardRight,
+    BackwardRight
+}
+
+/***************************************************************/
 /* Move Class: Represents a move for a fox or geese            */
 /***************************************************************/
 public class Move {
@@ -45,9 +56,6 @@ public class Move {
     /***************************************************************/
     @Override
     public String toString() {
-        return "Move{" +
-                "person=" + person.name() +
-                ", dir=" + dir.name() +
-                '}';
+        return "Move " + person.name() + " in direction " + dir.name();
     }
 }

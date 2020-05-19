@@ -17,10 +17,10 @@ public class MinMaxPlayer {
     Random ran;     //random number generator
 
     //Configuration
-    int ROW_MULTIPLIER = 10;        //Bonus that a fox gets per row away from bottom
-    int GOOSE_ATTACK_VALUE = 15;    //Each attacking (adjacent) goose subtracts this to the eval score
-    int PAST_THE_GOOSE_BONUS = 5;   //Each goose the fox passes adds to the eval score
-    int EDGE_PENALTY_VALUE = 10;   //Subtracts from the eval score if fox is on col 0 or col 7
+    int ROW_MULTIPLIER = 100;       //Bonus that a fox gets per row away from bottom
+    int GOOSE_ATTACK_VALUE = 20;    //Each attacking (adjacent) goose subtracts this to the eval score
+    int PAST_THE_GOOSE_BONUS = 15;   //Each goose the fox passes adds to the eval score
+    int EDGE_PENALTY_VALUE = 10;    //Subtracts from the eval score if fox is on col 0 or col 7
 
     /***************************************************************/
     /* Method: MinMaxPlayer                                        */
@@ -67,7 +67,7 @@ public class MinMaxPlayer {
     /* Parameters: Board board: The current game board             */
     /* Returns: Move:                                              */
     /***************************************************************/
-    Move doAIStuff(Board board) {
+    Move runSearch(Board board) {
         if (maxDepth == 0) {
             return randomMove(board);
         }
@@ -85,18 +85,42 @@ public class MinMaxPlayer {
         Node n = new Node(board, isFox);
         int v;
         if (isFox) {
+            //if we are fox, try to maximize value
             v = Max_Value(n, Integer.MIN_VALUE, Integer.MAX_VALUE, maxDepth*2);
         } else {
+            //geese try to minimize value
             v = Min_Value(n, Integer.MIN_VALUE, Integer.MAX_VALUE, maxDepth*2);
         }
 
+        //get move with same value as v
         for (Node child : n.children) {
             if (child.value == v) {
                 return child.move;
             }
         }
 
+        //if we can't find a move with the returned value, return null (Not expected)
         return null;
+    }
+
+    /***************************************************************/
+    /* Method: cleanupNode                                         */
+    /* Purpose: delete a node's children (if necessary)            */
+    /*          and return the value                               */
+    /* Parameters: Node node: node to clean up                     */
+    /*             integer depth: The current depth of the search  */
+    /* Returns: integer: The value of node                         */
+    /***************************************************************/
+    private int cleanupNode(Node node, int depth) {
+        if (depth != maxDepth) {
+            //clean children if node is not a top level node
+            //if a node has a value assigned, we no longer have a use for its children, unless..
+            //it is a top level node.
+            //we need the children of the top level node to select which move to make once the search completes.
+            node.children.clear();
+            //clearing unneeded nodes keeps the space complexity of the algorithm to O(bm)
+        }
+        return node.value;
     }
 
     /***************************************************************/
@@ -109,25 +133,25 @@ public class MinMaxPlayer {
     /* Returns: integer: The max value of the current node         */
     /***************************************************************/
     int Max_Value(Node maxNode, int alpha, int beta, int depth) {
+        //Check end condition and return board evaluation
         if (depth == 0 || maxNode.board.checkWinGoose() || maxNode.board.checkWinFox()) {
             maxNode.value = evalFunc(maxNode.board);
             return maxNode.value;
         }
 
-        int nodeValue = Integer.MIN_VALUE;
+        //run max search on children
+        maxNode.value = Integer.MIN_VALUE;
         ArrayList<Node> children = maxNode.getChildren(true); //Max Nodes can only do fox moves
         for (Node child : children) {
-            nodeValue = Math.max(nodeValue, Min_Value(child, alpha, beta, depth - 1));
-            if (nodeValue >= beta) {
-                maxNode.value = nodeValue;
-                return maxNode.value;
+            maxNode.value = Math.max(maxNode.value, Min_Value(child, alpha, beta, depth - 1));
+            if (maxNode.value >= beta) {
+                return cleanupNode(maxNode, depth);
             }
-            alpha = Math.max(alpha, nodeValue);
+            alpha = Math.max(alpha, maxNode.value);
         }
-        maxNode.beta = beta;
-        maxNode.alpha = alpha;
-        maxNode.value = nodeValue;
-        return maxNode.value;
+
+        //set node values and return
+        return cleanupNode(maxNode, depth);
     }
 
     /***************************************************************/
@@ -140,26 +164,26 @@ public class MinMaxPlayer {
     /* Returns: integer: The min value of the current node         */
     /***************************************************************/
     int Min_Value(Node minNode, int alpha, int beta, int depth) {
+        //Check end condition and return board evaluation
         if (depth == 0 || minNode.board.checkWinGoose() || minNode.board.checkWinFox()) {
             minNode.value = evalFunc(minNode.board);
             return minNode.value;
         }
 
-        int nodeValue = Integer.MAX_VALUE;
+        //run min search on children
+        minNode.value = Integer.MAX_VALUE;
         ArrayList<Node> children = minNode.getChildren(false); //Min Nodes can only do goose moves
         for (Node child : children) {
-            nodeValue = Math.min(nodeValue, Max_Value(child, alpha, beta, depth - 1));
-            if (nodeValue <= alpha) {
-                minNode.value = nodeValue;
-                return minNode.value;
+            minNode.value = Math.min(minNode.value, Max_Value(child, alpha, beta, depth - 1));
+            if (minNode.value <= alpha) {
+                return cleanupNode(minNode, depth);
             }
-            beta = Math.min(beta, nodeValue);
+            beta = Math.min(beta, minNode.value);
         }
-        minNode.beta = beta;
-        minNode.alpha = alpha;
-        minNode.value = nodeValue;
-        return minNode.value;
+
+        return cleanupNode(minNode, depth);
     }
+
 
     /***************************************************************/
     /* Method: evalFunc                                            */
@@ -226,6 +250,7 @@ public class MinMaxPlayer {
     /***************************************************************/
     Move randomMove(Board board) {
         if (isFox) {
+            //pick random direction
             MoveDir dir;
             do {
                 int dirChoice = ran.nextInt(4);
@@ -240,7 +265,7 @@ public class MinMaxPlayer {
 
             return new Move(MovePerson.Fox, dir);
         } else {
-            //computer plays as goose
+            //pick random goose and direction
             int goose;
             MoveDir dir;
             do {

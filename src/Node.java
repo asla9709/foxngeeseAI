@@ -14,10 +14,7 @@ public class Node {
     boolean isMax;  //decides whether the current node is min or max
 
     int value;      //the value of the node
-    int alpha = Integer.MAX_VALUE;  //the alpha value of the node
-    int beta = Integer.MIN_VALUE;   //the beta value of the node
 
-    Node parent = null;     //the parent node
     ArrayList<Node> children = new ArrayList<>();   //the list of child nodes
 
     /***************************************************************/
@@ -35,18 +32,6 @@ public class Node {
 
     /***************************************************************/
     /* Method: Node                                                */
-    /* Purpose: Copy Constructor, create a copy of the parent node */
-    /* Parameters: Node parent: The parent of the current node     */
-    /* Returns: None                                               */
-    /***************************************************************/
-    Node(Node parent) {
-        this.parent = parent;
-        this.board = new Board(parent.board); // copy board
-        this.isMax = !parent.isMax;
-    }
-
-    /***************************************************************/
-    /* Method: Node                                                */
     /* Purpose: Constructor, create a copy of the parent node and  */
     /*          then perform a move on the game board              */
     /* Parameters: Node parent: The parent of the current node     */
@@ -55,7 +40,6 @@ public class Node {
     /***************************************************************/
     Node(Node parent, Move newMove) {
         this.move = newMove;
-        this.parent = parent;
         this.board = new Board(parent.board); // copy board
         this.isMax = !parent.isMax;
 

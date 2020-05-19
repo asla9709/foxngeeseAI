@@ -6,18 +6,6 @@
 /*              geese locations, valid moves, wins/loses.      */
 /***************************************************************/
 
-/***************************************************************/
-/* Method: BoardSpot                                           */
-/* Purpose: Enum to represent the type of spots on the board   */
-/* Parameters: None                                            */
-/* Returns: None                                               */
-/***************************************************************/
-enum BoardSpot{
-    Invalid,
-    Empty,
-    Goose,
-    Fox
-}
 
 public class Board{
     Location[] GeeseLocs;   //The location of all the geese
@@ -61,18 +49,22 @@ public class Board{
     /* Returns: char: The item at a location on the game board     */
     /***************************************************************/
     char printSpot(Location loc){
+        //Checkerboard Pattern
         if(( loc.row + loc.col)%2 == 0){
             return '□';
         }
+        //Fox location
         if (FoxLoc.equals(loc)){
             return 'f';
         }
+        //Geese Locations
         for (int goose = 0; goose < 4; goose++) {
             if(GeeseLocs[goose].equals(loc)){
                 return Integer.toString(goose + 1).charAt(0);
             }
         }
 
+        //Empty Spot
         return '■';
     }
 
@@ -115,10 +107,11 @@ public class Board{
     /*                   moves, false otherwise                    */
     /***************************************************************/
     public boolean checkWinGoose(){
-        //check every direction
+        //check every direction to see if the fox can move
         for(MoveDir dir: MoveDir.values()){
             if (isValidMoveFox(dir)) return false;
         }
+        //If the fox cannot move, the geese have won
         return true;
     }
 
@@ -166,7 +159,6 @@ public class Board{
             case BackwardLeft -> new Location(FoxLoc.row + 1, FoxLoc.col - 1);
             case ForwardRight -> new Location(FoxLoc.row - 1, FoxLoc.col + 1);
             case BackwardRight -> new Location(FoxLoc.row + 1, FoxLoc.col + 1);
-            default -> new Location(FoxLoc.row - 1, FoxLoc.col + 1);
         };
 
         //check if the new location is within the game board
@@ -230,7 +222,6 @@ public class Board{
                 new_loc.col = goose_loc.col + 1;
                 break;
             case BackwardRight:
-                return false;
             case BackwardLeft:
                 return false;
         }

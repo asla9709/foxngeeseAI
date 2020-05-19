@@ -21,7 +21,7 @@ public class main {
         Scanner scan = new Scanner(System.in);
 
         //create a MinMaxPlayer
-        MinMaxPlayer player;
+        MinMaxPlayer computerPlayer ;
 
         boolean userIsFox;    //decides whether user is fox or geese
         int searchDepth = 0;  //max search depth allowed by the user
@@ -42,80 +42,58 @@ public class main {
         }
 
         //create the AI player
-        player = new MinMaxPlayer(!userIsFox, searchDepth);
+        computerPlayer = new MinMaxPlayer(!userIsFox, searchDepth);
 
         //create a new game board
         Board board = new Board();
         System.out.println(board);
 
+        //fox goes first
+        boolean userTurn = userIsFox;
+
         //starts playing the game...
         boolean gameOver = false;
         while (!gameOver) {
-            //--------------------------------PLAYER MOVING--------------------------------
-            int playerMove = 0;
+            if(userTurn) {
+                //user moves
+                //give user the menu of choices for input
+                printUserPrompt(userIsFox);
 
-            //give player the menu of choices for input
-            if (userIsFox) {
-                //fox
-                System.out.println("Current available moves:\n" +
-                        "1. right forward\n" +
-                        "2. left forward\n" +
-                        "3. right backward\n" +
-                        "4. left backward");
+                //Make a move on the board
+                boolean moveMade = false;
+                //keep asking for input until the user picks a valid input
+                while (!moveMade) {
+                    //get user input
+
+                    int userInput = 0;
+                    if (scan.hasNextInt()) {
+                        userInput = scan.nextInt();
+                        //if user enters 0, game ends
+                        if (userInput == 0) {
+                            gameOver = true;
+                            break;
+                        }
+                    }
+
+                    //Turn user selection into move
+                    Move userMove = parseMoveSelection(userIsFox, userInput);
+
+                    //Try to do move if it is valid
+                    moveMade = board.doMove(userMove);
+
+                    if (!moveMade) {
+                        //If move not valid, ask for another selection
+                        System.out.println("That move is invalid, please select another move");
+                    }
+                }
             } else {
-                //geese
-                System.out.println("Current available moves:\n" +
-                        "1. right goose 1\n" +
-                        "2. left goose 1\n" +
-                        "3. right goose 2\n" +
-                        "4. left goose 2\n" +
-                        "5. right goose 3\n" +
-                        "6. left goose 3\n" +
-                        "7. right goose 4\n" +
-                        "8. left goose 4");
+                //Computer moves
+                Move computerMove = computerPlayer .runSearch(board);
+                board.doMove(computerMove);
+
+                System.out.println("The computer moved " + (userIsFox? computerMove.person : "the fox") + " in the direction " + computerMove.dir);
             }
 
-            //Make a move on the board
-            boolean moveMade = false;
-            while (!moveMade) {
-                if (scan.hasNextInt()) {
-                    playerMove = scan.nextInt();
-                    if (playerMove == 0) {
-                        gameOver = true;
-                        break;
-                    }
-                }
-                if (userIsFox) {
-                    MoveDir playerDirection;
-                    playerDirection = switch (playerMove) {
-                        case 1 -> MoveDir.ForwardRight;
-                        case 2 -> MoveDir.ForwardLeft;
-                        case 3 ->  MoveDir.BackwardRight;
-                        default -> MoveDir.BackwardLeft;
-                    };
-
-                    moveMade = board.moveFox(playerDirection);
-
-                } else {
-                    MoveDir playerDirection;
-                    int goose;
-
-                    if (playerMove % 2 == 0) {
-                        playerDirection = MoveDir.ForwardLeft;
-                    } else {
-                        playerDirection = MoveDir.ForwardRight;
-                    }
-                    goose = (playerMove + 1) / 2 - 1;
-
-                    moveMade = board.moveGoose(playerDirection, goose);
-                }
-
-                if(!moveMade){
-                    System.out.println("That move is invalid, please select another move");
-                }
-            }
-
-            //print board
             System.out.println(board);
 
             //check for win conditions
@@ -130,33 +108,59 @@ public class main {
                 break;
             }
 
-            //--------------------------------COMPUTER MOVING--------------------------------
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            userTurn = !userTurn; //switch turns
+        }
+    }
 
-            //generate a move
-            Move computerMove = player.doAIStuff(board);
-            board.doMove(computerMove);
+    private static Move parseMoveSelection(boolean userIsFox, int userInput) {
+        Move userMove;
+        if (userIsFox) {
+            //fox move
+            MoveDir userDirection;
+            userDirection = switch (userInput) {
+                case 1 -> MoveDir.ForwardLeft;
+                case 2 -> MoveDir.ForwardRight;
+                case 3 -> MoveDir.BackwardLeft;
+                default -> MoveDir.BackwardRight;
+            };
 
-            //print out the computer's move
-            System.out.println("The computer did the move " + computerMove);
-            System.out.println(board);
+            userMove = new Move(MovePerson.Fox, userDirection);
 
-            //check for win conditions
-            if(board.checkWinFox()){
-                System.out.println("The Fox won!");
-                System.out.println("You lost to a computer haha noob");
-                gameOver = true;
-                break;
+        } else {
+            MoveDir userDirection;
+            int goose;
+
+            if (userInput % 2 == 0) {
+                userDirection = MoveDir.ForwardRight;
+            } else {
+                userDirection = MoveDir.ForwardLeft;
             }
-            if(board.checkWinGoose()){
-                System.out.println("Geese have won");
-                gameOver = true;
-                break;
-            }
+            goose = (userInput + 1) / 2 - 1;
+
+            userMove = new Move(MovePerson.values()[goose], userDirection);
+        }
+        return userMove;
+    }
+
+    private static void printUserPrompt(boolean userIsFox) {
+        if (userIsFox) {
+            //fox
+            System.out.println("Current available moves:\n" +
+                    "1. left forward\n" +
+                    "2. right forward\n" +
+                    "3. left backward\n" +
+                    "4. right backward");
+        } else {
+            //geese
+            System.out.println("Current available moves:\n" +
+                    "1. left goose 1\n" +
+                    "2. right goose 1\n" +
+                    "3. left goose 2\n" +
+                    "4. right goose 2\n" +
+                    "5. left goose 3\n" +
+                    "6. right goose 3\n" +
+                    "7. left goose 4\n" +
+                    "8. right goose 4");
         }
     }
 }

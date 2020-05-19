@@ -22,7 +22,7 @@ public class Test {
             //--------------------------------PLAYER MOVING--------------------------------
 
             //Make a move on the board
-            Move m = playerFox.doAIStuff(board);
+            Move m = playerFox.runSearch(board);
             board.doMove(m);
 
             //print board
@@ -41,7 +41,7 @@ public class Test {
                 break;
             }
 
-            m = playerGoose.doAIStuff(board);
+            m = playerGoose.runSearch(board);
             board.doMove(m);
 
             System.out.println("The goose did the move " + m);
